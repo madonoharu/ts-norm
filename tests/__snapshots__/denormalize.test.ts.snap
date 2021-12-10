@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`denormalize denormalizes entities 1`] = `
+Array [
+  Object {
+    "id": 1,
+    "type": "foo",
+  },
+  Object {
+    "id": 2,
+    "type": "bar",
+  },
+]
+`;
+
+exports[`denormalize denormalizes nested entities 1`] = `
+Object {
+  "author": Object {
+    "id": "8472",
+    "name": "Paul",
+  },
+  "body": "This article is great.",
+  "comments": Array [
+    Object {
+      "comment": "I like it!",
+      "id": "comment-123-4738",
+      "user": Object {
+        "id": "10293",
+        "name": "Jane",
+      },
+    },
+  ],
+  "id": "123",
+  "title": "A Great Article",
+}
+`;
+
+exports[`denormalize set to undefined if schema key is not in entities 1`] = `
+Object {
+  "author": undefined,
+  "comments": Array [
+    Object {
+      "id": "1",
+      "user": undefined,
+    },
+  ],
+  "id": "123",
+}
+`;
