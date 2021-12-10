@@ -1,5 +1,7 @@
 # ts-norm
 
+[![npm version](https://img.shields.io/npm/v/ts-norm?style=flat-square)](https://www.npmjs.com/package/ts-norm)
+
 A [normalizr](https://github.com/paularmstrong/normalizr) like library for TypeScript.  
 🙏Pull requests are welcome!
 
