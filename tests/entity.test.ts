@@ -1,4 +1,5 @@
-import { denormalize, normalize, schema } from "../src";
+import { denormalize, normalize, schema, Dictionary } from "../src";
+import { expectExactType } from "./utils";
 
 describe("entity", () => {
   test("with idAttribute", () => {
@@ -9,7 +10,7 @@ describe("entity", () => {
     interface Article {
       articleId: number;
       title: string;
-      author: User;
+      author?: User;
     }
 
     const user = schema<User>().entity(
@@ -37,11 +38,12 @@ describe("entity", () => {
     type Expected = {
       result: number;
       entities: {
-        users: Record<string, User>;
-        articles: Record<
-          string,
-          { articleId: number; title: string; author: number }
-        >;
+        users: Dictionary<User>;
+        articles: Dictionary<{
+          articleId: number;
+          title: string;
+          author?: number;
+        }>;
       };
     };
 
@@ -52,15 +54,14 @@ describe("entity", () => {
       normalized.entities
     );
 
-    expect<Expected>(normalized).toEqual<Expected>({
+    expectExactType<Expected>()(normalized).toEqual({
       result: 1,
       entities: {
         articles: { "1": { articleId: 1, title: "foo", author: 2 } },
         users: { "2": { userId: 2, name: "bar" } },
       },
     });
-
-    expect(denormalized).toEqual(input);
+    expectExactType<Article>()(denormalized).toEqual(input);
   });
 
   test("with generateId", () => {
@@ -95,21 +96,15 @@ describe("entity", () => {
     type Expected = {
       result: number;
       entities: {
-        users: Record<
-          string,
-          {
-            userId: string;
-            name: string;
-          }
-        >;
-        articles: Record<
-          string,
-          {
-            articleId: number;
-            title: string;
-            author: string;
-          }
-        >;
+        users: Dictionary<{
+          userId: string;
+          name: string;
+        }>;
+        articles: Dictionary<{
+          articleId: number;
+          title: string;
+          author: string;
+        }>;
       };
     };
 
@@ -128,7 +123,7 @@ describe("entity", () => {
       normalized.entities
     );
 
-    expect<Expected>(normalized).toEqual<Expected>({
+    expectExactType<Expected>()(normalized).toEqual({
       result: 2,
       entities: {
         articles: { "2": { articleId: 2, title: "foo", author: "user1" } },
@@ -136,7 +131,7 @@ describe("entity", () => {
       },
     });
 
-    expect(denormalized).toEqual({
+    expectExactType<Article>()(denormalized).toEqual({
       articleId: 2,
       title: "foo",
       author: {
