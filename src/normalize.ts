@@ -9,7 +9,7 @@ import {
   NormalizedSchema,
   isObject,
   nonNullable,
-} from "./tsHelpers";
+} from "./types";
 
 export class Normalizer {
   entities: NestedEntities = {};

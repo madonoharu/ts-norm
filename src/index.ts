@@ -1,5 +1,5 @@
 import { EntityOptions, EntitySchema } from "./entity";
-import { AnyEntitySchema, EntityId, EntitySchemaDefinition } from "./tsHelpers";
+import { AnyEntitySchema, EntityId, EntitySchemaDefinition } from "./types";
 
 type ExtractIdType<
   Input extends object,
@@ -45,7 +45,7 @@ export function schema<T extends object>(): SchemaBuilder<T> {
   return builder;
 }
 
-export * from "./tsHelpers";
+export * from "./types";
 export { normalize } from "./normalize";
 export { denormalize } from "./denormalize";
 export { EntitySchema } from "./entity";
