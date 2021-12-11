@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { normalize, schema, Dictionary, EntityId } from "../src";
-import { expectExactType } from "./utils";
+import { expectExactType } from "./type-test";
 
 describe("normalize", () => {
   [42, null, undefined, "42", () => undefined].forEach((input) => {

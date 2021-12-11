@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { denormalize, schema } from "../src";
-import { expectExactType } from "./utils";
+import { expectExactType } from "./type-test";
 
 describe("denormalize", () => {
   test("cannot denormalize without a schema", () => {

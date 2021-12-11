@@ -1,5 +1,5 @@
 import { denormalize, normalize, schema, Dictionary } from "../src";
-import { expectExactType } from "./utils";
+import { expectExactType } from "./type-test";
 
 describe("entity", () => {
   test("with idAttribute", () => {
