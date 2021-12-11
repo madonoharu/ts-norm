@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { EntityId, normalize, schema } from "../src";
+import { normalize, schema, Dictionary, EntityId } from "../src";
+import { expectExactType } from "./type-test";
 
 describe("normalize", () => {
   [42, null, undefined, "42", () => undefined].forEach((input) => {
@@ -20,11 +21,11 @@ describe("normalize", () => {
     type Expected = {
       result: number[];
       entities: {
-        tacos: Record<string, Taco>;
+        tacos: Dictionary<Taco>;
       };
     };
 
-    expect<Expected>(
+    expectExactType<Expected>()(
       normalize(
         [
           { id: 1, type: "foo" },
@@ -53,17 +54,14 @@ describe("normalize", () => {
     type Expected = {
       result: number;
       entities: {
-        users: Record<
-          string,
-          {
-            id: number;
-            friends: number[];
-          }
-        >;
+        users: Dictionary<{
+          id: number;
+          friends: number[];
+        }>;
       };
     };
 
-    expect<Expected>(normalize(input, user)).toMatchSnapshot();
+    expectExactType<Expected>()(normalize(input, user)).toMatchSnapshot();
   });
 
   test("normalizes nested entities", () => {
@@ -120,28 +118,23 @@ describe("normalize", () => {
     type Expected = {
       result: string;
       entities: {
-        users: Record<string, User>;
-        comments: Record<
-          string,
-          {
-            id: string;
-            comment: string;
-            user: string;
-          }
-        >;
-        articles: Record<
-          string,
-          {
-            id: string;
-            title: string;
-            author: string;
-            body: string;
-            comments: string[];
-          }
-        >;
+        users: Dictionary<User>;
+        comments: Dictionary<{
+          id: string;
+          comment: string;
+          user: string;
+        }>;
+        articles: Dictionary<{
+          id: string;
+          title: string;
+          author: string;
+          body: string;
+          comments: string[];
+        }>;
       };
     };
-    expect<Expected>(normalize(input, article)).toMatchSnapshot();
+
+    expectExactType<Expected>()(normalize(input, article)).toMatchSnapshot();
   });
 
   test("does not modify the original input", () => {
@@ -172,15 +165,12 @@ describe("normalize", () => {
     type Expected = {
       result: string;
       entities: {
-        users: Record<string, User>;
-        articles: Record<
-          string,
-          {
-            id: string;
-            title: string;
-            author: string;
-          }
-        >;
+        users: Dictionary<User>;
+        articles: Dictionary<{
+          id: string;
+          title: string;
+          author: string;
+        }>;
       };
     };
 
@@ -193,15 +183,19 @@ describe("normalize", () => {
     type Expected<T> = {
       result: T[];
       entities: {
-        myentities: Record<string, { id: EntityId }>;
+        myentities: Dictionary<{ id: EntityId }>;
       };
     };
 
-    expect<Expected<null>>(normalize([null], [myEntity])).toMatchSnapshot();
-    expect<Expected<undefined>>(
+    expectExactType<Expected<null>>()(
+      normalize([null], [myEntity])
+    ).toMatchSnapshot();
+    expectExactType<Expected<undefined>>()(
       normalize([undefined], [myEntity])
     ).toMatchSnapshot();
-    expect<Expected<false>>(normalize([false], [myEntity])).toMatchSnapshot();
+    expectExactType<Expected<false>>()(
+      normalize([false as const], [myEntity])
+    ).toMatchSnapshot();
   });
 
   test("can normalize object without proper object prototype inheritance", () => {
@@ -233,8 +227,8 @@ describe("normalize", () => {
     type Expected = {
       result: number;
       entities: {
-        elements: Record<string, Element>;
-        test: Record<string, { id: number; elements: number[] }>;
+        elements: Dictionary<Element>;
+        test: Dictionary<{ id: number; elements: number[] }>;
       };
     };
 

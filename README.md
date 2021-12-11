@@ -1,5 +1,7 @@
 # ts-norm
 
+[![npm version](https://img.shields.io/npm/v/ts-norm?style=flat-square)](https://www.npmjs.com/package/ts-norm)
+
 A [normalizr](https://github.com/paularmstrong/normalizr) like library for TypeScript.  
 🙏Pull requests are welcome!
 
@@ -40,7 +42,7 @@ Consider a typical blog post. The API response for a single post might look some
 We have two nested entity types within our `article`: `users` and `comments`. Using various `schema`, we can normalize all three entity types down:
 
 ```ts
-import { normalize, denormalize, schema } from "ts-norm";
+import { normalize, denormalize, schema, Dictionary } from "ts-norm";
 
 type User = {
   id: string;
@@ -81,12 +83,14 @@ const denormalizedData = denormalize(
 type Expected = {
   result: string;
   entities: {
-    users: Record<string, { id: string; name: string }>;
-    comments: Record<string, { id: string; commenter: string }>;
-    articles: Record<
-      string,
-      { id: string; author: string; title: string; comments: string[] }
-    >;
+    users: Dictionary<{ id: string; name: string }>;
+    comments: Dictionary<{ id: string; commenter: string }>;
+    articles: Dictionary<{
+      id: string;
+      author: string;
+      title: string;
+      comments: string[];
+    }>;
   };
 };
 
@@ -154,21 +158,15 @@ const normalizedData = normalize(originalData, article);
 type Expected = {
   result: number;
   entities: {
-    users: Record<
-      string,
-      {
-        userId: string;
-        name: string;
-      }
-    >;
-    articles: Record<
-      string,
-      {
-        articleId: number;
-        title: string;
-        author: string;
-      }
-    >;
+    users: Dictionary<{
+      userId: string;
+      name: string;
+    }>;
+    articles: Dictionary<{
+      articleId: number;
+      title: string;
+      author: string;
+    }>;
   };
 };
 

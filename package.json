@@ -1,16 +1,6 @@
 {
   "name": "ts-norm",
-  "version": "0.1.0",
-  "license": "MIT",
-  "author": "MadonoHaru <madonoharu@gmail.com>",
-  "sideEffects": false,
-  "main": "cjs/index.js",
-  "module": "esm/index.js",
-  "types": "cjs/index.d.ts",
-  "files": [
-    "cjs",
-    "esm"
-  ],
+  "version": "0.2.0",
   "description": "A normalizr like library for TypeScript",
   "keywords": [
     "normalizr",
@@ -18,6 +8,17 @@
     "normalize",
     "denormalize",
     "redux"
+  ],
+  "repository": "git@github.com:madonoharu/ts-norm.git",
+  "license": "MIT",
+  "author": "Madono Haru <madonoharu@gmail.com>",
+  "sideEffects": false,
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "types": "cjs/index.d.ts",
+  "files": [
+    "cjs",
+    "esm"
   ],
   "scripts": {
     "build": "yarn build:esm & yarn build:cjs",

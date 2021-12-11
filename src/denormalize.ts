@@ -12,7 +12,7 @@ import {
   Schema,
   isObject,
   nonNullable,
-} from "./tsHelpers";
+} from "./types";
 
 export class Denormalizer {
   cache: Record<string, object> = {};

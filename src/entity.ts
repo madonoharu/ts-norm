@@ -1,6 +1,11 @@
 import { Denormalizer } from "./denormalize";
 import { Normalizer } from "./normalize";
-import { EntityId, EntitySchemaDefinition, nonNullable } from "./tsHelpers";
+import {
+  nonNullable,
+  CircularMark,
+  EntityId,
+  EntitySchemaDefinition,
+} from "./types";
 
 export type DefinitionEntries<S extends EntitySchemaDefinition<object>> = [
   keyof S & string,
@@ -72,14 +77,14 @@ export class EntitySchema<
   ): EntitySchema<Input, Key, Definition & D2, IdAttribute, IdType>;
 
   define<D2 extends EntitySchemaDefinition<Input>>(
-    definition: (self: this) => D2
+    definition: (self: this & CircularMark) => D2
   ): EntitySchema<Input, Key, Definition & D2, IdAttribute, IdType>;
 
   define<D2 extends EntitySchemaDefinition<Input>>(
-    definition: D2 | ((self: this) => D2)
+    definition: D2 | ((self: this & CircularMark) => D2)
   ): EntitySchema<Input, Key, Definition & D2, IdAttribute, IdType> {
     if (typeof definition === "function") {
-      Object.assign(this.definition, definition(this));
+      Object.assign(this.definition, definition(this as this & CircularMark));
     } else {
       Object.assign(this.definition, definition);
     }

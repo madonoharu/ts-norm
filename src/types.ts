@@ -1,11 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { EntitySchema } from "./entity";
 
+export interface Dictionary<T> {
+  [id: string]: T | undefined;
+}
+
 export type UnionToIntersection<U> = (
   U extends unknown ? (arg: U) => 0 : never
 ) extends (arg: infer I) => 0
   ? I
   : never;
+
+export type CircularMark = { __mark: "circular" };
 
 export type NoInfer<T> = [T][T extends any ? 0 : never];
 
@@ -22,7 +28,7 @@ type ObjectTypeKeys<T> = {
 }[keyof T];
 
 export type EntitySchemaDefinition<T> = {
-  [P in keyof T & string]?: T[P] extends object ? Schema<T[P]> : never;
+  [P in keyof T & string]?: Schema<T[P] & object>;
 };
 
 export type SchemaObject<T extends object> = ObjectTypeKeys<T> extends never
@@ -55,6 +61,13 @@ export type EntityIdType<E extends AnyEntitySchema> = E extends EntitySchema<
   ? IdType
   : never;
 
+type EntityTypeImpl<
+  Input extends object,
+  Definition extends EntitySchemaDefinition<Input>,
+  IdAttribute extends string,
+  IdType extends EntityId
+> = NormalizedSchemaResult<Input, Definition> & Record<IdAttribute, IdType>;
+
 export type EntityType<E extends AnyEntitySchema> = E extends EntitySchema<
   infer Input,
   any,
@@ -62,7 +75,7 @@ export type EntityType<E extends AnyEntitySchema> = E extends EntitySchema<
   infer IdAttribute,
   infer IdType
 >
-  ? NormalizedSchemaResult<Input, Definition> & Record<IdAttribute, IdType>
+  ? EntityTypeImpl<Input, Definition, IdAttribute, IdType>
   : never;
 
 export type NormalizedSchemaResultArray<
@@ -71,10 +84,9 @@ export type NormalizedSchemaResultArray<
 > = I extends (infer Item)[] ? NormalizedSchemaResult<Item, S[0]>[] : never;
 
 export type NormalizedSchemaResultObject<I, S extends AnySchemaObject> = {
-  [K in keyof I]: NormalizedSchemaResult<
-    I[K],
-    Extract<S[K & keyof S], AnySchema>
-  >;
+  [K in keyof I]: K extends keyof S
+    ? NormalizedSchemaResult<I[K], Extract<S[K], AnySchema>>
+    : I[K];
 };
 
 export type NormalizedSchemaResult<I, S extends AnySchema> = I extends object
@@ -91,14 +103,12 @@ type NormalizedSchemaEntitiesUnionImpl<
   Input extends object,
   Key extends string,
   Definition extends EntitySchemaDefinition<Input>,
-  IdAttribute extends string
+  IdAttribute extends string,
+  IdType extends EntityId
 > =
   | Record<
       Key,
-      Record<
-        string,
-        EntityType<EntitySchema<Input, Key, Definition, IdAttribute, any>>
-      >
+      Dictionary<EntityTypeImpl<Input, Definition, IdAttribute, IdType>>
     >
   | NormalizedSchemaEntitiesUnion<Definition>;
 
@@ -108,9 +118,17 @@ type NormalizedSchemaEntitiesUnion<S extends AnySchema> =
     infer Key,
     infer Definition,
     infer IdAttribute,
-    any
+    infer IdType
   >
-    ? NormalizedSchemaEntitiesUnionImpl<Input, Key, Definition, IdAttribute>
+    ? S extends CircularMark
+      ? never
+      : NormalizedSchemaEntitiesUnionImpl<
+          Input,
+          Key,
+          Definition,
+          IdAttribute,
+          IdType
+        >
     : S extends AnySchemaArray
     ? NormalizedSchemaEntitiesUnion<S[0]>
     : S extends Record<string, AnySchema>
@@ -134,16 +152,4 @@ export function isObject(v: unknown): v is object {
 
 export function nonNullable<T>(item: T): item is NonNullable<T> {
   return item !== undefined && item !== null;
-}
-
-export default function isPlainObject(value: unknown): value is object {
-  if (typeof value !== "object" || value === null) return false;
-
-  let proto = value;
-  while (Object.getPrototypeOf(proto) !== null) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    proto = Object.getPrototypeOf(proto);
-  }
-
-  return Object.getPrototypeOf(value) === proto;
 }
