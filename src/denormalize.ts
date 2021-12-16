@@ -1,4 +1,3 @@
-import { EntitySchema } from "./entity";
 import {
   AnyEntitySchema,
   AnySchema,
@@ -12,6 +11,7 @@ import {
   Schema,
   isObject,
   nonNullable,
+  isEntitySchema,
 } from "./types";
 
 export class Denormalizer {
@@ -76,7 +76,7 @@ export class Denormalizer {
   }
 
   visit(input: unknown, schema: AnySchema): unknown {
-    if (schema instanceof EntitySchema) {
+    if (isEntitySchema(schema)) {
       if (typeof input !== "string" && typeof input !== "number") {
         return input;
       }

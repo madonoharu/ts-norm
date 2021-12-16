@@ -1,4 +1,3 @@
-import { EntitySchema } from "./entity";
 import {
   AnyEntitySchema,
   AnySchema,
@@ -9,6 +8,7 @@ import {
   NormalizedSchema,
   isObject,
   nonNullable,
+  isEntitySchema,
 } from "./types";
 
 export class Normalizer {
@@ -61,7 +61,7 @@ export class Normalizer {
       return input;
     }
 
-    if (schema instanceof EntitySchema) {
+    if (isEntitySchema(schema)) {
       return this.visitEntity(input, schema);
     }
 

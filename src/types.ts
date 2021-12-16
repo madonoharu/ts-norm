@@ -150,6 +150,10 @@ export function isObject(v: unknown): v is object {
   return typeof v === "object" && Boolean(v);
 }
 
+export function isEntitySchema(v: unknown): v is AnyEntitySchema {
+  return v instanceof EntitySchema;
+}
+
 export function nonNullable<T>(item: T): item is NonNullable<T> {
   return item !== undefined && item !== null;
 }
