@@ -4,7 +4,7 @@ import {
   AnySchemaArray,
   AnySchemaObject,
   EntityId,
-  NestedEntities,
+  Entities,
   NoInfer,
   NormalizedSchemaEntities,
   NormalizedSchemaResult,
@@ -17,7 +17,7 @@ import {
 export class Denormalizer {
   cache: Record<string, object> = {};
 
-  constructor(public entities: NestedEntities) {}
+  constructor(public entities: Entities) {}
 
   getEntity(input: EntityId, schema: AnyEntitySchema) {
     return this.entities[schema.key]?.[input];
@@ -103,7 +103,7 @@ export function denormalize<S extends AnySchema>(
   schema: S,
   entities: NoInfer<NormalizedSchemaEntities<S>>
 ): SchemaInputType<S> {
-  const visitor = new Denormalizer(entities as unknown as NestedEntities);
+  const visitor = new Denormalizer(entities as Entities);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return visitor.visit(input, schema) as SchemaInputType<S>;
 }

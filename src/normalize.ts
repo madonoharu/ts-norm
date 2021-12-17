@@ -4,7 +4,7 @@ import {
   AnySchemaArray,
   AnySchemaObject,
   EntityId,
-  NestedEntities,
+  Entities,
   NormalizedSchema,
   isObject,
   nonNullable,
@@ -12,7 +12,7 @@ import {
 } from "./types";
 
 export class Normalizer {
-  entities: NestedEntities = {};
+  entities: Entities = {};
   cache = new Map<unknown, EntityId>();
 
   addEntity(schema: AnyEntitySchema, id: EntityId, processedEntity: object) {

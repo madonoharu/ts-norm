@@ -48,8 +48,7 @@ export type AnySchemaArray = AnySchema[];
 export type AnySchemaObject = { [key: string]: AnySchema | undefined };
 export type AnySchema = AnyEntitySchema | AnySchemaArray | AnySchemaObject;
 
-export type Entities = Record<string, object | undefined>;
-export type NestedEntities = Record<string, Entities | undefined>;
+export type Entities = Record<string, Dictionary<object>>;
 
 export type EntityIdType<E extends AnyEntitySchema> = E extends EntitySchema<
   any,
