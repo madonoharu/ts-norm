@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-import { NormalizedSchema, EntitySchema, Dictionary } from "../src";
+import { NormalizedSchema, EntitySchema, Dictionary, AnySchema } from "../src";
 
 export type IsAny<T, True, False = never> = true | false extends (
   T extends never ? true : false
@@ -54,4 +55,13 @@ export function testType<T, U extends Equals<T, U>>() {}
   };
 
   testType<NormalizedSchema<{}, ArticleSchema>, Expected>();
+}
+
+{
+  type Expected = {
+    result: any;
+    entities: unknown;
+  };
+
+  testType<NormalizedSchema<any, AnySchema>, Expected>();
 }

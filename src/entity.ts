@@ -2,6 +2,7 @@ import { Denormalizer } from "./denormalize";
 import { Normalizer } from "./normalize";
 import {
   nonNullable,
+  isEntityId,
   CircularMark,
   EntityId,
   EntitySchemaDefinition,
@@ -101,7 +102,7 @@ export class EntitySchema<
   getId(input: Input): EntityId | undefined {
     const id = (input as Record<string, unknown>)[this.idAttribute];
 
-    if (typeof id === "string" || typeof id === "number") {
+    if (isEntityId(id)) {
       return id;
     }
 

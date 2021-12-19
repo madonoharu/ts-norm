@@ -111,39 +111,45 @@ type NormalizedSchemaEntitiesUnionImpl<
     >
   | NormalizedSchemaEntitiesUnion<Definition>;
 
-type NormalizedSchemaEntitiesUnion<S extends AnySchema> =
-  S extends EntitySchema<
-    infer Input,
-    infer Key,
-    infer Definition,
-    infer IdAttribute,
-    infer IdType
-  >
-    ? S extends CircularMark
-      ? never
-      : NormalizedSchemaEntitiesUnionImpl<
-          Input,
-          Key,
-          Definition,
-          IdAttribute,
-          IdType
-        >
-    : S extends AnySchemaArray
-    ? NormalizedSchemaEntitiesUnion<S[0]>
-    : S extends Record<string, AnySchema>
-    ? {
-        [P in keyof S]: NormalizedSchemaEntitiesUnion<S[P]>;
-      }[keyof S]
-    : never;
-
-export type NormalizedSchemaEntities<S extends AnySchema> = AnySchema extends S
+type NormalizedSchemaEntitiesUnion<S extends AnySchema> = AnySchema extends S
   ? never
-  : UnionToIntersection<NormalizedSchemaEntitiesUnion<S>>;
+  : S extends EntitySchema<
+      infer Input,
+      infer Key,
+      infer Definition,
+      infer IdAttribute,
+      infer IdType
+    >
+  ? S extends CircularMark
+    ? never
+    : NormalizedSchemaEntitiesUnionImpl<
+        Input,
+        Key,
+        Definition,
+        IdAttribute,
+        IdType
+      >
+  : S extends AnySchemaArray
+  ? NormalizedSchemaEntitiesUnion<S[0]>
+  : S extends Record<string, AnySchema>
+  ? {
+      [P in keyof S]: NormalizedSchemaEntitiesUnion<S[P]>;
+    }[keyof S]
+  : never;
+
+export type NormalizedSchemaEntities<S extends AnySchema> = UnionToIntersection<
+  NormalizedSchemaEntitiesUnion<S>
+>;
 
 export type NormalizedSchema<I, S extends AnySchema> = {
   result: NormalizedSchemaResult<I, S>;
   entities: NormalizedSchemaEntities<S>;
 };
+
+export function isEntityId(v: unknown): v is EntityId {
+  const t = typeof v;
+  return t === "string" || t === "number";
+}
 
 export function isObject(v: unknown): v is object {
   return typeof v === "object" && Boolean(v);
