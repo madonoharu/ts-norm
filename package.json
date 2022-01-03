@@ -1,6 +1,6 @@
 {
   "name": "ts-norm",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A normalizr like library for TypeScript",
   "keywords": [
     "normalizr",
