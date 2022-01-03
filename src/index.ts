@@ -1,5 +1,5 @@
 import { EntityOptions, EntitySchema } from "./entity";
-import { AnyEntitySchema, EntityId, EntitySchemaDefinition } from "./types";
+import { EntityId, EntitySchemaDefinition } from "./types";
 
 type ExtractIdType<
   Input extends object,
@@ -33,7 +33,8 @@ const entity = (
   key: string,
   definition: EntitySchemaDefinition<object> = {},
   options = {}
-): AnyEntitySchema => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): EntitySchema<any, string, any, any, any> => {
   return new EntitySchema(key, definition, options);
 };
 
