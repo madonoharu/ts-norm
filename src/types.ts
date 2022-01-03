@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { EntitySchema } from "./entity";
 
-export interface Dictionary<T> {
-  [id: string]: T | undefined;
-}
+export type IsAny<T, True, False = never> = true | false extends (
+  T extends never ? true : false
+)
+  ? True
+  : False;
 
 export type UnionToIntersection<U> = (
   U extends unknown ? (arg: U) => 0 : never
@@ -11,9 +13,13 @@ export type UnionToIntersection<U> = (
   ? I
   : never;
 
+export type NoInfer<T> = [T][T extends any ? 0 : never];
+
 export type CircularMark = { __mark: "circular" };
 
-export type NoInfer<T> = [T][T extends any ? 0 : never];
+export interface Dictionary<T> {
+  [id: string]: T | undefined;
+}
 
 export type EntityId = string | number;
 
@@ -28,7 +34,7 @@ type ObjectTypeKeys<T> = {
 }[keyof T];
 
 export type EntitySchemaDefinition<T> = {
-  [P in keyof T & string]?: Schema<T[P] & object>;
+  [P in keyof T]?: Schema<T[P] & object>;
 };
 
 export type SchemaObject<T extends object> = ObjectTypeKeys<T> extends never
@@ -39,11 +45,11 @@ export type SchemaObject<T extends object> = ObjectTypeKeys<T> extends never
 
 export type SchemaArray<T> = Schema<T & object>[];
 
-export type Schema<T extends object> = T extends (infer I)[]
+export type Schema<T extends object> = [T] extends [(infer I)[]]
   ? SchemaArray<I>
   : EntitySchema<T, any, any, any, any> | SchemaObject<T>;
 
-export type AnyEntitySchema = EntitySchema<any, string, any, any, any>;
+export type AnyEntitySchema = EntitySchema<any, string, any, string, any>;
 export type AnySchemaArray = AnySchema[];
 export type AnySchemaObject = { [key: string]: AnySchema | undefined };
 export type AnySchema = AnyEntitySchema | AnySchemaArray | AnySchemaObject;

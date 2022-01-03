@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-import { NormalizedSchema, EntitySchema, Dictionary, AnySchema } from "../src";
-
-export type IsAny<T, True, False = never> = true | false extends (
-  T extends never ? true : false
-)
-  ? True
-  : False;
+import {
+  NormalizedSchema,
+  EntitySchema,
+  Dictionary,
+  AnySchema,
+  IsAny,
+  schema,
+  EntityId,
+  EntityType,
+} from "../src";
 
 type Equals<T, U> = IsAny<
   T,
@@ -64,4 +67,37 @@ export function testType<T, U extends Equals<T, U>>() {}
   };
 
   testType<NormalizedSchema<any, AnySchema>, Expected>();
+}
+
+{
+  type Leaf = {
+    type: "leaf";
+  };
+
+  type Node = {
+    type: "node";
+    children: (Node | Leaf)[];
+  };
+
+  type Input = Node | Leaf;
+
+  const node = schema<Input>()
+    .entity("nodes")
+    .define((self) => ({
+      children: [self],
+    }));
+
+  type Entity =
+    | { id: EntityId; type: "leaf" }
+    | { id: EntityId; type: "node"; children: EntityId[] };
+
+  type Expected = {
+    result: EntityId;
+    entities: {
+      nodes: Dictionary<Entity>;
+    };
+  };
+
+  testType<EntityType<typeof node>, Entity>();
+  testType<NormalizedSchema<Node | Leaf, typeof node>, Expected>();
 }

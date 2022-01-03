@@ -74,11 +74,13 @@ export class EntitySchema<
   }
 
   define<D2 extends EntitySchemaDefinition<Input>>(
-    definition: D2
+    definition: D2 & EntitySchemaDefinition<Input>
   ): EntitySchema<Input, Key, Definition & D2, IdAttribute, IdType>;
 
   define<D2 extends EntitySchemaDefinition<Input>>(
-    definition: (self: this & CircularMark) => D2
+    definition: (
+      self: this & CircularMark
+    ) => D2 & EntitySchemaDefinition<Input>
   ): EntitySchema<Input, Key, Definition & D2, IdAttribute, IdType>;
 
   define<D2 extends EntitySchemaDefinition<Input>>(
