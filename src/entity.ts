@@ -32,7 +32,7 @@ export interface EntityOptions<
   IdType extends EntityId
 > {
   idAttribute?: IdAttribute;
-  generateId?: () => IdType;
+  idGenerator?: () => IdType;
   fallbackStrategy?: FallbackFn<Input, Key, Definition, IdAttribute, IdType>;
 }
 
@@ -44,13 +44,13 @@ export class EntitySchema<
   IdType extends EntityId
 > {
   idAttribute: IdAttribute;
-  generateId?: EntityOptions<
+  idGenerator?: EntityOptions<
     Input,
     Key,
     Definition,
     IdAttribute,
     IdType
-  >["generateId"];
+  >["idGenerator"];
   fallbackStrategy?: EntityOptions<
     Input,
     Key,
@@ -65,8 +65,8 @@ export class EntitySchema<
     options: EntityOptions<Input, Key, Definition, IdAttribute, IdType> = {}
   ) {
     this.idAttribute = (options.idAttribute || "id") as IdAttribute;
-    if (options.generateId) {
-      this.generateId = options.generateId;
+    if (options.idGenerator) {
+      this.idGenerator = options.idGenerator;
     }
     if (options.fallbackStrategy) {
       this.fallbackStrategy = options.fallbackStrategy;
@@ -108,7 +108,7 @@ export class EntitySchema<
       return id;
     }
 
-    return this.generateId?.();
+    return this.idGenerator?.();
   }
 
   fallback(id: EntityId) {

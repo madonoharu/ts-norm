@@ -81,7 +81,7 @@ describe("entity", () => {
       {},
       {
         idAttribute: "userId",
-        generateId: genUserId,
+        idGenerator: genUserId,
       }
     );
     const article = schema<Article>().entity(
@@ -89,7 +89,7 @@ describe("entity", () => {
       { author: user },
       {
         idAttribute: "articleId",
-        generateId: genArticleId,
+        idGenerator: genArticleId,
       }
     );
 
