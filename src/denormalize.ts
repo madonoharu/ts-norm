@@ -67,8 +67,6 @@ export class Denormalizer {
     if (!cache[key]) {
       const entityCopy = { ...entity };
 
-      // Need to set this first so that if it is referenced further within the
-      // denormalization the reference will already exist.
       cache[key] = entityCopy;
       cache[key] = schema.denormalize(entityCopy, this);
     }
